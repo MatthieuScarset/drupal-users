@@ -1,0 +1,81 @@
+id: user
+label: 'Users from drupal.org API (JSON)'
+migration_group: users
+migration_tags:
+  - json
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: json
+  track_changes: true
+  source_url: 'https://www.drupal.org/api-d7/user.json?sort=created&direction=DESC'
+  urls:
+    callback: drusers_get_urls_to_import
+  #include_raw_data: true
+  skip_count: true
+  item_selector: list
+  fields:
+    -
+      name: unique_id
+      label: 'Unique ID'
+      selector: uid
+    -
+      name: username
+      label: 'Username'
+      selector: name
+    -
+      name: body
+      label: 'Description'
+      selector: field_bio/value
+    -
+      name: name_first
+      label: 'First name'
+      selector: field_first_name
+    -
+      name: name_last
+      label: 'Last name'
+      selector: field_last_name
+    -
+      name: country
+      label: 'Country'
+      selector: field_country
+    -
+      name: mentors
+      label: 'Mentors'
+      selector: field_mentors
+    -
+      name: organizations
+      label: 'Organizations'
+      selector: field_organizations
+    -
+      name: link
+      label: 'Link'
+      selector: url
+  ids:
+    unique_id:
+      type: integer
+process:
+  unique_id: unique_id
+  username: username
+  name_first: name_first
+  name_last: name_last
+  body/value: body
+  body/format:
+      plugin: default_value
+      default_value: 'html'
+  country:
+    plugin: entity_generate
+    source: country
+    value_key: name
+    entity_type: taxonomy_term
+    bundle: country
+    bundle_key: vid
+  link: link
+destination:
+  plugin: entity:node
+  default_bundle: user
+migration_dependencies: {  }
+dependencies:
+  enforced:
+    module:
+      - node

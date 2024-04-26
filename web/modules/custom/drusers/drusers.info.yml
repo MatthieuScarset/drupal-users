@@ -1,0 +1,7 @@
+name: Drusers
+description: Manage users from drupal.org
+type: module
+core_version_requirement: ^10
+dependencies:
+  - drupal:user
+  - migrate_plus:migrate_plus

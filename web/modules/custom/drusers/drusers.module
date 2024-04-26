@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Contains hook and preprocess functions for drusers.module.
+ */
+
+use Drupal\Component\Serialization\Json;
+use Drupal\migrate\Plugin\MigrateSourceInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
+use Drupal\migrate\Row;
+
+/**
+ * Implements hook_migrate_MIGRATION_ID_prepare_row() for relationships migration.
+ */
+function drusers_migrate_relationships_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
+  $uids = [];
+  $mentors = $row->getSourceProperty('field_mentors') ?? [];
+  foreach ($mentors as $data) {
+    $uids[] = $data['id'];
+  }
+  $row->setSourceProperty('field_mentors', implode('+', $uids));
+}
+
+/**
+ * Implements hook_migrate_source_info_alter().
+ */
+function drusers_get_urls_to_import(MigrationInterface $migration) {
+  $urls = [];
+
+  // @todo Cache results.
+
+  try {
+    $min = 0;
+    $config = $migration->getSourceConfiguration();
+    $source_url = $config['source_url'] ?? NULL;
+    $response = \Drupal::httpClient()->get($source_url);
+    $data = Json::decode($response->getBody()->getContents());
+    $parts = explode('page=', $data['last'] ?? '');
+    $max = (int) (end($parts) ?? '0');
+    foreach (range($min, $max) as $i) {
+      $urls[] = $source_url . '&page=' . $i;
+    }
+  } catch (\Exception $e) {
+    \Drupal::logger('drusers')->error($e->getMessage());
+  }
+
+  return $urls;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function drusers_cron() {
+  $queue = \Drupal::queue('run_migrations');
+  $data = ['migration_ids' => ['user']];
+  $queue->createItem($data);
+}

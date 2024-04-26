@@ -1,0 +1,58 @@
+id: relationships
+label: 'User relationships from drupal.org API (JSON)'
+migration_group: users
+migration_tags:
+  - json
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  data_parser_plugin: json
+  track_changes: true
+  source_url: 'https://www.drupal.org/api-d7/user.json?sort=created&direction=DESC'
+  urls:
+    callback: drusers_get_urls_to_import
+  #include_raw_data: true
+  skip_count: true
+  item_selector: list
+  fields:
+    -
+      name: unique_id
+      label: 'Unique ID'
+      selector: uid
+    -
+      name: mentors
+      label: 'Mentors'
+      selector: field_mentors
+    -
+      name: organizations
+      label: 'Organizations'
+      selector: field_organizations
+    -
+      name: language
+      label: 'Language'
+      selector: field_user_primary_language
+  ids:
+    unique_id:
+      type: integer
+process:
+  unique_id:
+    plugin: skip_on_empty
+    method: row
+    source: unique_id
+  mentors:
+    -
+      plugin: explode
+      delimiter: '+'
+      source: mentors
+    -
+      plugin: migration_lookup
+      migration: user
+  # Languages (e.g. entity_generate)
+  # Organizations (e.g. field_collection)
+destination:
+  plugin: entity:node
+migration_dependencies: {  }
+dependencies:
+  enforced:
+    module:
+      - node

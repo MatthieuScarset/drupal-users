@@ -1,0 +1,9 @@
+status: 1
+pattern: '[node:unique_id] [node:name_first] [node:name_last] ([node:username])'
+escape: false
+preserve_titles: false
+save: true
+chunk: 50
+dependencies:
+  config:
+    - node.type.user

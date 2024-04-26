@@ -1,0 +1,23 @@
+uuid: f9025802-462e-449b-8cd5-dec220f2b196
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.unique_id
+    - node.type.user
+id: node.user.unique_id
+field_name: unique_id
+entity_type: node
+bundle: user
+label: UID
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
