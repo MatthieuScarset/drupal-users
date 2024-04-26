@@ -1,0 +1,17 @@
+uuid: fa462fb8-7eb8-4775-9b17-10c86f3c276a
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: kAg5j9eTxAyvuMxvOAK4Fve-7KxBZ6Sxh_QYuiPwNlM
+id: content
+region: content
+weight: null
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: transform_api
+  label_display: null
+visibility: {  }

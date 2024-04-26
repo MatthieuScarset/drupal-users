@@ -35,9 +35,9 @@ source:
     unique_id:
       type: integer
 process:
-  unique_id:
-    plugin: skip_on_empty
-    method: row
+  nid:
+    plugin: migration_lookup
+    migration: user
     source: unique_id
   mentors:
     -
@@ -51,6 +51,7 @@ process:
   # Organizations (e.g. field_collection)
 destination:
   plugin: entity:node
+  default_bundle: user
 migration_dependencies: {  }
 dependencies:
   enforced:

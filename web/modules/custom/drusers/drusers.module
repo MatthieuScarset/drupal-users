@@ -15,11 +15,11 @@ use Drupal\migrate\Row;
  */
 function drusers_migrate_relationships_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
   $uids = [];
-  $mentors = $row->getSourceProperty('field_mentors') ?? [];
+  $mentors = $row->getSourceProperty('mentors') ?? [];
   foreach ($mentors as $data) {
     $uids[] = $data['id'];
   }
-  $row->setSourceProperty('field_mentors', implode('+', $uids));
+  $row->setSourceProperty('mentors', implode('+', $uids));
 }
 
 /**
@@ -40,6 +40,7 @@ function drusers_get_urls_to_import(MigrationInterface $migration) {
     $max = (int) (end($parts) ?? '0');
     foreach (range($min, $max) as $i) {
       $urls[] = $source_url . '&page=' . $i;
+      \Drupal::logger('drusers')->notice('Page: ' . $i);
     }
   } catch (\Exception $e) {
     \Drupal::logger('drusers')->error($e->getMessage());
